@@ -1,0 +1,130 @@
+
+;CONSTANTS
+(defconst maximum_civilians 10)
+(defconst attack_army_size 10)
+(defconst max_army_size 100)
+
+
+;STRATEGIC NUMBERS
+(defrule
+(true)
+=>
+(set-strategic-number sn-maximum-explore-group-size 10)
+(set-strategic-number sn-percent-civilian-explorers 90) 
+(set-strategic-number sn-number-explore-groups 1)
+(set-strategic-number sn-cap-civilian-explorers -1) ;ignore explorer cap
+(set-strategic-number sn-percent-attack-soldiers 100)
+(set-strategic-number sn-total-number-explorers 20) ;default cap is 4, so increase it
+(set-strategic-number sn-maximum-town-size 24)
+(disable-self)
+)
+
+; Start timer
+(defrule
+(true)
+=>
+(enable-timer 1 300)
+(disable-self)
+)
+
+
+;RESOURCES CHEAT
+(defrule
+(true)
+=>
+(cc-add-resource gold 10000)
+(cc-add-resource stone 10000)
+(cc-add-resource wood 10000)
+(cc-add-resource food 10000)
+(disable-self)
+)
+
+;TRAINING
+
+;train a militia-line
+(defrule
+(can-train militiaman-line)
+(unit-type-count militiaman-line < max_army_size)
+=>
+(train militiaman-line)
+)
+
+;train a villager
+(defrule
+(civilian-population < maximum_civilians)
+(can-train villager)
+=>
+(train villager)
+)
+
+;TODO make sure there is a scout in case the starting one dies
+
+;BUILDING
+;build a barracks
+(defrule
+(can-build barracks)
+(building-type-count  barracks < 4)
+=>
+(build barracks)
+)
+
+;build houses
+(defrule
+(housing-headroom < 5)
+(population-headroom != 0)
+(can-build house)
+=>
+(build house)
+)
+
+;TSA attack
+(defrule
+(not (up-enemy-buildings-in-town > 0))
+(strategic-number sn-maximum-town-size == 124)
+=>
+(set-strategic-number sn-maximum-town-size 144)
+)
+
+(defrule
+(not (up-enemy-buildings-in-town > 0))
+(strategic-number sn-maximum-town-size == 104)
+=>
+(set-strategic-number sn-maximum-town-size 124)
+)
+
+(defrule
+(not (up-enemy-buildings-in-town > 0))
+(strategic-number sn-maximum-town-size == 84)
+=>
+(set-strategic-number sn-maximum-town-size 104)
+)
+
+(defrule
+(not (up-enemy-buildings-in-town > 0))
+(strategic-number sn-maximum-town-size == 64)
+=>
+(set-strategic-number sn-maximum-town-size 84)
+)
+
+(defrule
+(not (up-enemy-buildings-in-town > 0))
+(strategic-number sn-maximum-town-size == 44)
+=>
+(set-strategic-number sn-maximum-town-size 64)
+)
+
+(defrule
+(not (up-enemy-buildings-in-town > 0))
+(strategic-number sn-maximum-town-size == 24)
+=>
+(set-strategic-number sn-maximum-town-size 44)
+)
+
+; say stuff
+(defrule
+(timer-triggered 1)
+=>
+(chat-to-all  "I'M COMING FOR YOU BIG BOY!")	
+(enable-timer 1 100)
+)
+
